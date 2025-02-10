@@ -10,12 +10,12 @@ const pool = mysql.createPool({
 }).promise()
 
 
-async function getAllUsers() { // Returns list of all users
+export async function getAllUsers() { // Returns list of all users
     const [result] = await pool.query("SELECT * FROM users")
     return result;
 }
 
-async function getUserFromId(id) {
+export async function getUserFromId(id) {
     const [rows] = await pool.query(`
         SELECT *
         FROM users
@@ -24,14 +24,46 @@ async function getUserFromId(id) {
     return rows[0];
 }
 
-async function createUser(name) { // Returns new id
+export async function createUser(name) { // Returns new id
     const [result] = await pool.query(`
         INSERT INTO
         users (name)
         VALUE (?)
         
     `, [name])
-    return result.insertId;
+    return getUserFromId(result.insertId);
+}
+
+export async function getTemplatesByUser(user_id) {
+    const [result] = await pool.query(`
+        SELECT *
+        FROM interval_templates
+        WHERE user_id = ?
+    `, [user_id])
+    return result;
+}
+
+export async function getTemplateFromId(template_id) {
+    const [result] = await pool.query(`
+        SELECT *
+        FROM interval_templates
+        WHERE template_id = ?
+    `, [template_id])
+    return result;
+}
+
+export async function createTemplate( {user_id, work_time, rest_time, name, number_of_intervals}) {
+    const [result] = await pool.query(`
+        INSERT INTO
+        interval_templates (user_id, work_time, rest_time, name, 
+	        number_of_intervals)
+        VALUES (?, ?, ?, ?, ?)
+    `, [user_id, work_time, rest_time, name, number_of_intervals])
+    return getTemplateFromId(result.insertId)
+}
+
+export async function submitWorkout() {
+
 }
 
 const users = await getAllUsers();
@@ -40,5 +72,4 @@ console.log(users);
 const user = await getUserFromId(5);
 console.log(user);
 
-const result = await createUser('Lars');
-console.log(result);
+console.log(await getTemplatesByUser(1))
