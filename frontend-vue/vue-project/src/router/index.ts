@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MainView from '../views/MainView.vue'
 import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
@@ -11,9 +10,19 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/test',
+      path: '/newTemplate',
       name: 'newHomeView',
-      component: MainView,
+      component: () => import('../views/NewTemplateView.vue'),
+    },
+    {
+      path: '/interval',
+      name: 'interval',
+      component: () => import('../views/IntervalView.vue'),
+    },
+    {
+      path: '/submit',
+      name: 'submit',
+      component: () => import('../views/SubmitWorkoutView.vue'),
     },
     {
       path: '/about',
