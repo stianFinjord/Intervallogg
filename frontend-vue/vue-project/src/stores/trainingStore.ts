@@ -12,6 +12,25 @@ export interface TrainingInterval {
 export const useTrainingStore = defineStore('training', () => {
     
     const trainingData = ref<TrainingInterval[]>([])
+
+    function initializeTrainingData(numberOfIntervals: number) {
+        trainingData.value = []
+
+        for(let i = 0; i < numberOfIntervals; i++) {
+            addInterval(
+                i+1,
+                {
+                    intervalNumber: i+1,
+                    rpe: 11,
+                    pulse: 0,
+                    speed: 0,
+                    incline: 0,
+                    workoutId: 12
+                }
+            )
+        }
+    }
+
     
     function addInterval(intervalId: number, interval: TrainingInterval) {
         trainingData.value[intervalId-1] = {
@@ -48,7 +67,7 @@ export const useTrainingStore = defineStore('training', () => {
 
     return {
         trainingData,
-        addInterval
-
+        addInterval,
+        initializeTrainingData
     }
 })

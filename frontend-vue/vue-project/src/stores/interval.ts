@@ -4,14 +4,16 @@ import { useRouter } from 'vue-router'
 import { useTrainingStore } from '@/stores/trainingStore';
 
 export const useIntervalStore = defineStore('interval', () => {
-    const isPaused = ref(false)
+    const isPaused = ref(true)
     const isWorkMode = ref(true)
     const currentInterval = ref(1)
-    const totalIntervals = ref(5)
+    const totalIntervals = ref(7)
     const workTime = ref(7)
     const restTime = ref(3)
     const timeRemaining = ref(2)
     const timerId = ref(0)
+
+    const currentRPE = ref(11)
 
     const router = useRouter()
     const trainingStore = useTrainingStore()
@@ -57,12 +59,26 @@ export const useIntervalStore = defineStore('interval', () => {
         clearInterval(timerId.value)
     }
 
+    function updateValues() {
+        currentRPE.value = trainingStore.trainingData[currentInterval.value].rpe
+    }
+
+
+
     function nextInterval() {
+        if(currentInterval.value < totalIntervals.value) {
+            currentInterval.value++
+            updateValues()
+        } else {
+            router.push('submit')
+        }
+    }
+    /* function nextInterval() {
         trainingStore.addInterval(
             currentInterval.value,
             {
                 intervalNumber: currentInterval.value,
-                rpe: 2,
+                rpe: trainingStore.trainingData[currentInterval.value-1].rpe,
                 pulse: 3,
                 speed: 4,
                 incline: 5,
@@ -71,13 +87,15 @@ export const useIntervalStore = defineStore('interval', () => {
         )
         if(currentInterval.value < totalIntervals.value) {
             currentInterval.value++
+            updateValues()
         } else {
             router.push('submit')
         }
-    }
+    } */
     function prevInterval() { //TODO: Make check if user wants to exit if value is 1
         if (currentInterval.value > 1) {
             currentInterval.value--
+            updateValues()
         }
     }
 
@@ -87,6 +105,7 @@ export const useIntervalStore = defineStore('interval', () => {
         totalIntervals, 
         timeRemaining, 
         isWorkMode,
+        currentRPE,
         togglePause, 
         nextInterval, 
         prevInterval

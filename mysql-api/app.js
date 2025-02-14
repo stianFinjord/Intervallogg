@@ -44,7 +44,7 @@ app.post("/templates", asyncHandler(async (req, res) => {
     res.status(201).send(template)
 }))
 
-//Idk what this just i followed a tutorial
+//Idk what this is i followed a tutorial
 app.use((err, req, res, next) => {
     console.error(err.stack)
 
