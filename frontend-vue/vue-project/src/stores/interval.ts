@@ -12,6 +12,8 @@ export const useIntervalStore = defineStore('interval', () => {
     const restTime = ref(3)
     const timeRemaining = ref(2)
     const timerId = ref(0)
+    const incline = ref(5)
+    const speed = ref(12500)
 
     const currentRPE = ref(11)
 
@@ -38,7 +40,6 @@ export const useIntervalStore = defineStore('interval', () => {
                 timeRemaining.value--
             } else {
                 if(isWorkMode.value) {
-                    console.log(isWorkMode.value)
                     nextInterval()
                 }
                 toggleWorkMode()
@@ -98,6 +99,13 @@ export const useIntervalStore = defineStore('interval', () => {
             updateValues()
         }
     }
+    const intervalProgress = computed(() => {
+        if(isWorkMode.value) {
+            return (timeRemaining.value/workTime.value) * 100
+        } else {
+            return (timeRemaining.value/restTime.value) * 100
+        }
+    })
 
     return {
         isPaused, 
@@ -106,6 +114,11 @@ export const useIntervalStore = defineStore('interval', () => {
         timeRemaining, 
         isWorkMode,
         currentRPE,
+        workTime,
+        restTime,
+        intervalProgress,
+        incline, 
+        speed,
         togglePause, 
         nextInterval, 
         prevInterval

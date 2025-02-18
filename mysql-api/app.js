@@ -1,6 +1,6 @@
 import express from 'express'
 import asyncHandler from './utils/asyncHandler.js'
-import {getAllUsers, getUserFromId, createUser, getTemplatesByUser, createTemplate} from './database.js'
+import {getAllUsers, getUserFromId, createUser, getTemplatesByUser, createTemplate, submitWorkout} from './database.js'
 
 const app = express()
 
@@ -40,8 +40,16 @@ app.get("/templates/:user_id", asyncHandler(async (req, res) => {
 }))
 
 app.post("/templates", asyncHandler(async (req, res) => {
+    console.log(req)
     const template = await createTemplate(req.body)
+    
     res.status(201).send(template)
+}))
+
+app.post("/workouts", asyncHandler(async (req, res) => {
+    const workout = await submitWorkout(req.body)
+    console.log(workout)
+    res.status(201).send(workout)
 }))
 
 //Idk what this is i followed a tutorial

@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import axios from 'axios'
+import { useTrainingStore } from '@/stores/trainingStore';
+
+
 </script>
 
 <template>
 this is the submit workout view, asking for confirm and showing summary
+
+<button @click="useTrainingStore().submitWorkout">Submit workout</button>
 
 
 </template>

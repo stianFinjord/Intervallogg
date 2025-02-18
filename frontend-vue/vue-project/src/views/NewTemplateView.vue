@@ -7,15 +7,16 @@ const counter = useCounterStore()
 const templates = ref([])
 
 const formData = ref({
-    workTime: '',
-    restTime: '',
+    work_time: '',
+    rest_time: '',
     name: '',
-    numberOfIntervals: '',
-    userId: 1  // Hardcoded for now
+    number_of_intervals: '',
+    user_id: 1  // Hardcoded for now
 })
 
 
 const submitTemplate = async () => {
+    console.log(formData.value)
     const response = await axios.post('http://localhost:8080/templates', formData.value)
     console.log('Template created:', response.data)
 
@@ -25,11 +26,11 @@ const submitTemplate = async () => {
 
     // Clear form
     formData.value = {
-      workTime: '',
-      restTime: '',
+      work_time: '',
+      rest_time: '',
       name: '',
-      numberOfIntervals: '',
-      userId: 1
+      number_of_intervals: '',
+      user_id: 1
     }
 }
 
@@ -76,7 +77,7 @@ onMounted(async () => {
             <div>
                 <label>Work Time (seconds):</label>
                 <input
-                    v-model="formData.workTime"
+                    v-model="formData.work_time"
                     type="number"
                     placeholder="Work time in seconds..."
                     required
@@ -85,7 +86,7 @@ onMounted(async () => {
             <div>
                 <label>Rest Time (seconds):</label>
                 <input 
-                    v-model="formData.restTime" 
+                    v-model="formData.rest_time" 
                     type="number" 
                     placeholder="Rest time in seconds..."
                     required
@@ -94,7 +95,7 @@ onMounted(async () => {
             <div>
                 <label>Number of intervals:</label>
                 <input 
-                    v-model="formData.numberOfIntervals" 
+                    v-model="formData.number_of_intervals" 
                     type="number" 
                     placeholder="Number of intervals..."
                     required

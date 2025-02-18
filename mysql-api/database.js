@@ -62,8 +62,31 @@ export async function createTemplate( {user_id, work_time, rest_time, name, numb
     return getTemplateFromId(result.insertId)
 }
 
-export async function submitWorkout() {
-
+export async function submitWorkout(workout) {
+    const values = []
+    let placeholder = "";
+    for(const row of workout) {
+        values.push(
+            row.workout_id,
+            row.work_time,
+            row.rest_time,
+            row.pulse,
+            row.meters_per_hour,
+            row.incline_percent_tenths,
+            row.rpe,
+        )
+        placeholder += "(?, ?, ?, ?, ?, ?, ?),"
+    }
+    placeholder = placeholder.slice(0,-1) //Remove last comma
+    console.log(placeholder)
+    console.log(values)
+    const [result] = await pool.query(`
+        INSERT INTO
+        drags (workout_id, work_time, rest_time, 
+            pulse, meters_per_hour, incline_percent_tenths, rpe)
+        VALUES ${ placeholder }
+    `, values)
+    return result;
 }
 
 const users = await getAllUsers();
