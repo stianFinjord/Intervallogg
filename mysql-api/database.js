@@ -1,5 +1,6 @@
 import mysql from 'mysql2'
 import dotenv from 'dotenv'
+import { response } from 'express'
 dotenv.config()
 
 const pool = mysql.createPool({
@@ -62,12 +63,12 @@ export async function createTemplate( {user_id, work_time, rest_time, name, numb
     return getTemplateFromId(result.insertId)
 }
 
-export async function submitWorkout(workout) {
+export async function submitWorkoutDrags(workout_id, workout) {
     const values = []
     let placeholder = "";
     for(const row of workout) {
         values.push(
-            row.workout_id,
+            workout_id,
             row.work_time,
             row.rest_time,
             row.pulse,
@@ -89,10 +90,60 @@ export async function submitWorkout(workout) {
     return result;
 }
 
+export async function submitWorkoutComment(user_id, comment) { //Returns workout ID
+    //find current time
+    const [result] = await pool.query(`
+        INSERT INTO
+        workouts (user_id, comment, timestamp)
+        VALUES (?, ?, CURRENT_TIMESTAMP)
+    `, [user_id, comment])
+    return result.insertId;
+}
+
+export async function submitWorkout(user_id, comment, drags) {
+    await pool.query('BEGIN')
+    try {
+        const [workout_result] = await pool.query(`
+            INSERT INTO
+            workouts (user_id, comment, timestamp)
+            VALUES (?, ?, CURRENT_TIMESTAMP) 
+        `, [user_id, comment])
+        const newWorkoutId = workout_result.insertId
+            
+        // Inject workout_id
+        const dragsWithId = drags.map(drag => ({
+            ...drag,
+            workout_id: newWorkoutId
+        }))
+        const {queryString: query, values: vals} = await queryFlattener("drags", dragsWithId)
+        const response = await pool.query(query, vals)
+        await pool.query('COMMIT')
+        return {"message": "Workout stored successfully", workout_id: newWorkoutId}
+    } catch(error) {
+        await pool.query('ROLLBACK')
+        console.error("DB Error: ", error.sqlMessage || error.message)
+        return response
+    }
+}
+
+async function queryFlattener(tablename, data) {
+    const values = data.flatMap(obj => Object.values(obj))
+    const placeholderSingle = "(" + "?, ".repeat((Object.keys(data[0]).length)-1) + "?)"
+    const placeholder = (placeholderSingle + ", ").repeat(data.length-1) + placeholderSingle
+    const queryString = `
+        INSERT INTO
+        ${tablename} (${Object.keys(data[0]).join(", ")})
+        VALUES ${placeholder}
+    `
+    console.log("values: ", values)
+    return {queryString, values}
+}
+
 const users = await getAllUsers();
-console.log(users);
+//console.log(users);
 
 const user = await getUserFromId(5);
-console.log(user);
+//console.log(user);
 
-console.log(await getTemplatesByUser(1))
+//console.log(await getTemplatesByUser(1))
+

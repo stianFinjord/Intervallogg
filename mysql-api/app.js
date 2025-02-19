@@ -1,6 +1,7 @@
 import express from 'express'
 import asyncHandler from './utils/asyncHandler.js'
-import {getAllUsers, getUserFromId, createUser, getTemplatesByUser, createTemplate, submitWorkout} from './database.js'
+import {getAllUsers, getUserFromId, createUser, getTemplatesByUser, createTemplate, 
+    submitWorkoutDrags, submitWorkoutComment, submitWorkout} from './database.js'
 
 const app = express()
 
@@ -46,10 +47,9 @@ app.post("/templates", asyncHandler(async (req, res) => {
     res.status(201).send(template)
 }))
 
-app.post("/workouts", asyncHandler(async (req, res) => {
-    const workout = await submitWorkout(req.body)
-    console.log(workout)
-    res.status(201).send(workout)
+app.post("/workouts", asyncHandler(async (req, res) => { // Trenger å opprette workout med kommentar først, finne ut hvilken ID den har, så sende payload med alle dragene med denne iden
+    const workout_id = await submitWorkout(req.body.user_id, req.body.comment, req.body.drags)
+    res.status(201).send({"message": "Workout saved successfully!", "workout_id": workout_id})
 }))
 
 //Idk what this is i followed a tutorial
