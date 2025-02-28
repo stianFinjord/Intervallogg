@@ -1,6 +1,5 @@
 import mysql from 'mysql2'
 import dotenv from 'dotenv'
-import { response } from 'express'
 dotenv.config()
 
 const pool = mysql.createPool({
@@ -108,21 +107,26 @@ export async function submitWorkout(user_id, comment, drags) {
             workouts (user_id, comment, timestamp)
             VALUES (?, ?, CURRENT_TIMESTAMP) 
         `, [user_id, comment])
-        const newWorkoutId = workout_result.insertId
-            
+
+        
         // Inject workout_id
+        const newWorkoutId = workout_result.insertId
         const dragsWithId = drags.map(drag => ({
             ...drag,
             workout_id: newWorkoutId
         }))
+
         const {queryString: query, values: vals} = await queryFlattener("drags", dragsWithId)
-        const response = await pool.query(query, vals)
+        await pool.query(query, vals)
         await pool.query('COMMIT')
-        return {"message": "Workout stored successfully", workout_id: newWorkoutId}
+        return {
+            "message": "Workout stored successfully", 
+            workout_id: newWorkoutId
+        }
     } catch(error) {
         await pool.query('ROLLBACK')
         console.error("DB Error: ", error.sqlMessage || error.message)
-        return response
+        throw error
     }
 }
 
@@ -135,15 +139,7 @@ async function queryFlattener(tablename, data) {
         ${tablename} (${Object.keys(data[0]).join(", ")})
         VALUES ${placeholder}
     `
-    console.log("values: ", values)
     return {queryString, values}
 }
 
-const users = await getAllUsers();
-//console.log(users);
-
-const user = await getUserFromId(5);
-//console.log(user);
-
-//console.log(await getTemplatesByUser(1))
 

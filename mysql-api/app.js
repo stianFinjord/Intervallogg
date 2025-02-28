@@ -48,8 +48,8 @@ app.post("/templates", asyncHandler(async (req, res) => {
 }))
 
 app.post("/workouts", asyncHandler(async (req, res) => { // Trenger å opprette workout med kommentar først, finne ut hvilken ID den har, så sende payload med alle dragene med denne iden
-    const workout_id = await submitWorkout(req.body.user_id, req.body.comment, req.body.drags)
-    res.status(201).send({"message": "Workout saved successfully!", "workout_id": workout_id})
+    const response = await submitWorkout(req.body.user_id, req.body.comment, req.body.drags)
+    res.status(201).send(response)
 }))
 
 //Idk what this is i followed a tutorial

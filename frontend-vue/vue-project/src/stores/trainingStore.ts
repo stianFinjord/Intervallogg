@@ -1,18 +1,31 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
 export interface TrainingInterval {
-    intervalNumber: number,
+    interval_number: number,
     rpe: number,
     pulse: number,
     meters_per_hour: number,
     incline_percent_tenths: number,
     workout_id: number,
 }
+
+export interface DragData extends TrainingInterval {
+    work_time: number,
+    rest_time: number
+}
+
+export interface WorkoutPayload {
+    user_id: number,
+    comment: string,
+    drags: DragData[]
+}
+
 export const useTrainingStore = defineStore('training', () => {
     
     const trainingData = ref<TrainingInterval[]>([])
+    const workoutComment = ref<string>()
 
     function initializeTrainingData(numberOfIntervals: number) {
         trainingData.value = []
@@ -21,7 +34,7 @@ export const useTrainingStore = defineStore('training', () => {
             addInterval(
                 i+1,
                 {
-                    intervalNumber: i+1,
+                    interval_number: i+1,
                     rpe: 11,
                     pulse: 0,
                     meters_per_hour: 0,
@@ -35,27 +48,35 @@ export const useTrainingStore = defineStore('training', () => {
     
     function addInterval(intervalId: number, interval: TrainingInterval) {
         trainingData.value[intervalId-1] = {
-            intervalNumber: interval.intervalNumber,
+            interval_number: interval.interval_number,
             rpe: interval.rpe,
             pulse: interval.pulse,
             meters_per_hour: interval.meters_per_hour,
             incline_percent_tenths: interval.incline_percent_tenths,
             workout_id: interval.workout_id
         }
+        // Debugging
         console.log("The current training data for the session looks like this: ")
         console.log(trainingData.value)
     }
 
     const submitWorkout = async () => {
-        const payload = trainingData.value.map(row => ({ // Prepare data for API
+        const drags: DragData[] = trainingData.value.map(row => ({ // Prepare data for API
             ...row,
             work_time: 5,
             rest_time: 10
         }))
-        //console.log(trainingData.value)
-        //console.log(payload)
+        const payload: WorkoutPayload = {
+            user_id: 4,
+            comment: "Kveldstrening",
+            drags
+        }
         const response = await axios.post('http://localhost:8080/workouts', payload)
         console.log('Workout saved: ', response.data)
+    }
+
+    async function submitWorkout2():Promise<void> {
+        
     }
 
     return {

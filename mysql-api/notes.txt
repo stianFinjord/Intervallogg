@@ -1,0 +1,6 @@
+Speed og incline er veldig like, prøve å gjøre mer DRY
+
+prøve å teste passing av data med komponenter
+
+
+sjekke om jeg bør ha mer inkapsulering i store
