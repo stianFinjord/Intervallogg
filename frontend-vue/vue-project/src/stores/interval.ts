@@ -8,9 +8,9 @@ export const useIntervalStore = defineStore('interval', () => {
     const isWorkMode = ref(true)
     const currentInterval = ref(1)
     const totalIntervals = ref(7)
-    const workTime = ref(30)
-    const restTime = ref(10)
-    const timeRemaining = ref(30)
+    const workTime = ref(0) // Does this need to be a ref?
+    const restTime = ref(0)
+    const timeRemaining = ref(0)
     const timerId = ref(0)
     const incline = ref(5)
     const speed = ref(12500)
@@ -39,7 +39,7 @@ export const useIntervalStore = defineStore('interval', () => {
             if(timeRemaining.value > 0) {
                 timeRemaining.value--
             } else {
-                if(isWorkMode.value) {
+                if(!isWorkMode.value) {
                     nextInterval()
                 }
                 toggleWorkMode()
@@ -74,31 +74,26 @@ export const useIntervalStore = defineStore('interval', () => {
             router.push('submit')
         }
     }
-    /* function nextInterval() {
-        trainingStore.addInterval(
-            currentInterval.value,
-            {
-                intervalNumber: currentInterval.value,
-                rpe: trainingStore.trainingData[currentInterval.value-1].rpe,
-                pulse: 3,
-                speed: 4,
-                incline: 5,
-                workoutId: 6
-            }
-        )
-        if(currentInterval.value < totalIntervals.value) {
-            currentInterval.value++
-            updateValues()
-        } else {
-            router.push('submit')
-        }
-    } */
+    
     function prevInterval() { //TODO: Make check if user wants to exit if value is 1
         if (currentInterval.value > 1) {
             currentInterval.value--
             updateValues()
+        } else {
+            if(confirm("Are you sure you want to cancel the workout?")) {
+                pauseTimer()
+                router.push('startWorkout')
+            }
         }
     }
+    function initializeWorkout(numberOfIntervals: number, work_time: number, rest_time: number) {
+        totalIntervals.value = numberOfIntervals
+        workTime.value = work_time
+        restTime.value = rest_time
+        timeRemaining.value = work_time
+        currentInterval.value = 1
+    }
+
     const intervalProgress = computed(() => {
         if(isWorkMode.value) {
             return (timeRemaining.value/workTime.value) * 100
@@ -121,6 +116,7 @@ export const useIntervalStore = defineStore('interval', () => {
         speed,
         togglePause, 
         nextInterval, 
-        prevInterval
+        prevInterval,
+        initializeWorkout
     }
 })

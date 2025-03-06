@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
-const inputValue = ref<string>("Stian er tøff")
+import { useTrainingStore } from '@/stores/trainingStore'
 
 const props = defineProps<{
     stian?: string,
@@ -9,14 +7,18 @@ const props = defineProps<{
     placeholderText?: string
 }>()
 
-const emit = defineEmits<{
+/* const emit = defineEmits<{
     stian: [text: string]
-}>()
+}>() */
 
-
-const handleSubmit = () => {
+const trainingStore = useTrainingStore();
+/* const handleSubmit = () => {
     emit('stian', inputValue.value)
-}
+} */
+
+/* function handleSubmit(comment: string) {
+    trainingStore.workoutComment = comment
+} */
 
 </script>
 
@@ -28,7 +30,7 @@ const handleSubmit = () => {
         :placeholder="placeholderText"
         v-bind:value="stian"
         @input="
-            $emit('stian',($event.target as HTMLInputElement).value)
+            trainingStore.workoutComment=($event.target as HTMLInputElement).value
         "
     >
     <p>{{ color }}</p>

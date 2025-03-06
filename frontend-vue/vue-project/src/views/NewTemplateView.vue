@@ -70,7 +70,7 @@ onMounted(async () => {
                 <label>Name:</label>
                 <input
                     v-model="formData.name"
-                    paceholder="Template Name..."
+                    placeholder="Template Name..."
                     required
                 >
             </div>

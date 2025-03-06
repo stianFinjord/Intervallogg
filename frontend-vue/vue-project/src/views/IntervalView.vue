@@ -26,6 +26,7 @@ trainingStore.initializeTrainingData(intervalStore.totalIntervals)
             <hr>
             <div>
                 <h3>{{ intervalStore.isWorkMode ? 'Work' : 'Rest'}} time remaining: {{ intervalStore.timeRemaining }}s</h3>
+                <h3 v-if="!intervalStore.isWorkMode">Fill in your data below</h3>
             </div>
         </div>
         <div class="bottom-section">

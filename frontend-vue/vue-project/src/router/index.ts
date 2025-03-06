@@ -25,6 +25,11 @@ const router = createRouter({
       component: () => import('../views/SubmitWorkoutView.vue'),
     },
     {
+      path: '/startWorkout',
+      name: 'startWorkout',
+      component: () => import('../views/StartWorkoutView.vue'),
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting

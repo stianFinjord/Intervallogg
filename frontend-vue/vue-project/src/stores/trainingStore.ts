@@ -68,19 +68,16 @@ export const useTrainingStore = defineStore('training', () => {
         }))
         const payload: WorkoutPayload = {
             user_id: 4,
-            comment: "Kveldstrening",
+            comment: workoutComment.value || '',
             drags
         }
         const response = await axios.post('http://localhost:8080/workouts', payload)
         console.log('Workout saved: ', response.data)
     }
 
-    async function submitWorkout2():Promise<void> {
-        
-    }
-
     return {
         trainingData,
+        workoutComment,
         addInterval,
         initializeTrainingData,
         submitWorkout,
